@@ -1,0 +1,46 @@
+ PHP APNS Provider as Service 
+------------------------------
+
+A small set of PHP scripts (to be run as a background service) to send messages to APNS (Apple Push Notifications Service).
+
+
+Features:
+	* Messages are sent from a queue. You can have a single, central queue and many instances of this script that send messages. Thus, this solution is extremely scalable.
+	* The connection with APNS servers is closed after X minutes of inactivity.
+	* If the connection with APNS servers is dropped (for whatever reason), the script creates a new connection automatically.
+	* 100% pure PHP code!
+
+
+Included files:
+	* PushMonitor.php (created by Alessandro Segala - released under LGPL)
+		The main script: this is the script you will run. It checks for new items in the queue at regular intervals and sends them to Apple through the PushService script.
+	* PushService.php (created by Luke Rhodes and adapted by Alessandro Segala - released into the public domain)
+		Manages the connection with APNS servers.
+		This script should never be executed directly: it is started by PushMonitor.
+	* PushErrors.log
+		A log file where the scripts write errors. Make sure it is writable.
+
+
+Requirements:
+	* PHP with CLI support and Memcache extension
+		o on Linux servers, if they aren't already installed, you should find these packages in your distro's repisitories (on Debian: "sudo aptitude install php-cli php-memcache").
+		o on Mac OSX Leopard, the built-in version of PHP doesn't have the Memcache extension: you might want to grab the version compiled by entropy.ch.
+	* MemcacheQ
+		o This is a little daemon that manages the message queue.
+		o It is based on MemcacheDB, so it extremely fast and persistent (based on Berkeley DB, a non-relational database).
+		o Uses the same protocol as Memcached, so you can connect to the MemcacheQ dameon using one of the many libraries, or even just with telnet.
+		o To install it, you must compile it (requires about 2 minutes): http://memcachedb.org/memcacheq/
+
+
+Installation:
+	1. Copy all files to a directory (e.g. /usr/local/push).
+	2. Place your push certificate in the same folder. Name it "apns.pem" (if you wish to change this name, please change it also in PushService.php). Don't add any password to the certificate.
+	3. If you need to use the sandbox, change the hostname in PushService.php.
+	4. Set the options in PushMonitor.php. In particular, you might wish to change the queue name.
+
+
+Usage:
+	* Start the PushMonitor.php script. The standard way is:
+			php -f /usr/local/push/PushMonitor.php
+		You might want to create an init.d/rc.d/launchd script to execute the file as a background process.
+	* To send messages, just add them to the queue!

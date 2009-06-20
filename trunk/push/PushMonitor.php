@@ -223,6 +223,8 @@ class Process
 	
 	public function kill()
 	{
+		global $debug;
+		
 		$status = proc_get_status($this->pointer);
 		
 		if($status['running'])

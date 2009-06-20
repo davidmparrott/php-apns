@@ -141,8 +141,11 @@ while(true)
 	// If all 3 attempts failed...
 	if($i == 3)
 	{
-		$process->kill();
-		$process = false;
+		if($process)
+		{
+			$process->kill();
+			$process = false;
+		}
 		error_log(date('Y-m-d H:i')." - Cannot send message:\n".$message."\nTo device: ".$deviceToken."\n\n", 3, 'PushErrors.log');
 	}
 }

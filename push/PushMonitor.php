@@ -135,6 +135,11 @@ while(true)
 		elseif($debug)
 		{
 			echo "Attempt ",$i+1," failed\n";
+			if($process)
+			{
+				$process->kill();
+				$process = false;
+			}
 		}
 	}
 	
@@ -234,7 +239,7 @@ class Process
 			fclose($this->pipes[2]);
 			
 			$ppid = $status['pid'];
-			$pids = preg_split('/\s+/', `ps -o pid --no-heading --pid $ppid`);
+			$pids = preg_split('/\s+/', `ps -o pid --no-heading --ppid $ppid`);
 			foreach($pids as $pid)
 			{
 				if(is_numeric($pid))

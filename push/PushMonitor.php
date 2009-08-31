@@ -132,9 +132,12 @@ while(true)
 			}
 			break;
 		}
-		elseif($debug)
+		else
 		{
-			echo "Attempt ",$i+1," failed\n";
+			if($debug)
+			{
+				echo "Attempt ",$i+1," failed\n";
+			}
 			if($process)
 			{
 				$process->kill();
